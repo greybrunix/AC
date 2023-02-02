@@ -6,8 +6,7 @@ fact (n+1) = (n+1) * (fact n)
 */
 int
 factorial(int n)
-{
-  int f = 1;
+{ int f = 1;
   while (n>0)
   { f = f*n;
     n = n-1;
@@ -31,20 +30,19 @@ factorial(int n)
 
 void
 swap(int*x,int*y)
-{
-    *x = *x ^ *y;
-    *y = *x ^ *y;
-    *x = *x ^ *y;
-    /* SSA form
-    int x0,x1,y0;
-    int*x2; int*y1;
-    x0 = *x; y0 = *y;
-    x2 = x; y1 = y;
+{  *x = *x ^ *y;
+   *y = *x ^ *y;
+   *x = *x ^ *y;
+   /* SSA form
+   int x0,x1,y0;
+   int*x2; int*y1;
+   x0 = *x; y0 = *y;
+   x2 = x; y1 = y;
 
-    x1=x0^y0;
-    *y1=x1^y0;
-    *x2=x1^*y1;
-    */
+   x1=x0^y0;
+   *y1=x1^y0;
+   *x2=x1^*y1;
+   */
 }
 
 /* It holds that the swap program executes for any input
