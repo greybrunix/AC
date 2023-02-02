@@ -31,9 +31,6 @@ iSort(int v[], int N)
 } // Best Case: O(N) comparisons
   // Worst Case: O(N^2) comparisons
 
-int
-mult
-
 
 int
 main()
