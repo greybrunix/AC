@@ -1,7 +1,7 @@
 /**
  * File: Data Structures; Trees, Heaps and Hashing tables
+ * THIS CODE IS IN C89 STANDARD*
 */
-
 /* Priority Queues */
 
 /* A priority queue is a buffer in which the first element to be
@@ -88,7 +88,7 @@ void
 initPQ(pqueue *queue)
 { queue->size = 0;
 }
-int
+
 isempty(pqueue *queue)
 { return (queue->size==0);
 }
@@ -97,7 +97,7 @@ isempty(pqueue *queue)
  * success or failure:
  * We have all the tools to define these procedures:
 */
-int
+
 add(pqueue *queue, int x)
 { int flag_err = (queue->size >= MAX);
   if (!flag_err)
@@ -107,7 +107,7 @@ add(pqueue *queue, int x)
   }
   return flag_err;
 }
-int
+
 remove(pqueue *queue, int *x)
 { int flag_err = isempty(queue);
   if (!flag_err)
@@ -120,10 +120,150 @@ remove(pqueue *queue, int *x)
   return flag_err;
 }
 
+/** Ex 12
+ * Show the evolution of:
+ * v={30,26,22,18,16,13,11,8,6,5,4,3} when passed as argument to heapify
+*/
+
+void
+heapify(int*vector, int N)
+{ int i;
+  for (i=1; i<N;i++)
+  { bubbleup(vector,i);
+  }
+}
+/*
+ * => v={26,30,22,18,16,13,11,8,6,5,4,3}
+ * => v={22,30,26,18,16,13,11,8,6,5,4,3}
+ * => v={22,18,26,30,16,13,11,8,6,5,4,3}
+ * => v={18,22,26,30,16,13,11,8,6,5,4,3}
+ * => v={18,16,26,30,22,13,11,8,6,5,4,3}
+ * => v={16,18,26,30,22,13,11,8,6,5,4,3}
+ * => v={16,18,13,30,22,26,11,8,6,5,4,3}
+ * => v={13,18,16,30,22,26,11,8,6,5,4,3}
+ * => v={13,18,11,30,22,26,16,8,6,5,4,3}
+ * => v={11,18,13,30,22,26,16,8,6,5,4,3}
+ * => v={11,18,13,8,22,26,16,30,6,5,4,3}
+ * => v={11,8,13,18,22,26,16,30,6,5,4,3}
+ * => v={8,11,13,18,22,26,16,30,6,5,4,3}
+ * => v={8,11,13,6,22,26,16,30,18,5,4,3}
+ * => v={8,6,13,11,22,26,16,30,18,5,4,3}
+ * => v={6,8,13,11,22,26,16,30,18,5,4,3}
+ * => v={6,8,13,11,5,26,16,30,18,22,4,3}
+ * => v={6,5,13,11,8,26,16,30,18,22,4,3}
+ * => v={5,6,13,11,8,26,16,30,18,22,4,3}
+ * => v={5,6,13,11,4,26,16,30,18,22,8,3}
+ * => v={5,4,13,11,6,26,16,30,18,22,8,3}
+ * => v={4,5,13,11,6,26,16,30,18,22,8,3}
+ * => v={4,5,13,11,6,3,16,30,18,22,8,26}
+ * => v={4,5,3,11,6,13,16,30,18,22,8,26}
+ * => v={3,5,4,11,6,13,16,30,18,22,8,26}
+ */
 /* Associative arrays */
 
+/* In this case it shall be a pair of key and info
+ * Since this represents a mathematical finite function, no key can be repeated;
+ * We will want to add new pairs;
+ * change the info associated to each key
+ * lookup the information associated with a key
+ * remove a key
+*/
 
-int
+/** Hash Table */
+#include <stdlib.h>
+
+hash(unsigned int x, int size) {
+    x = ((x >> 16) ^ x) * 0x45d9f3b;
+    x = ((x >> 16) ^ x) * 0x45d9f3b;
+    x = (x >> 16) ^ x;
+    return (int) (x % size);
+}
+
+/*** Closed Addressing ***/
+
+struct bucket
+{ int key; int info;
+  struct bucket*next;
+};
+/* Note the hashtable itself will be a pointer to a pointer to a bucket */
+void
+inittab(struct bucket** h, int size)
+{ int i;
+  for (i=0; i<size; h[i++]=NULL);
+}
+
+lookup(struct bucket**h, int size, int key, int *info)
+{ int p = hash(key, size);
+  int found = 0;
+  struct bucket*item;
+  for (item = h[p];
+       item!=NULL && item->key!=key;
+       item=item->next)
+    ;
+  if (item!=NULL)
+  { *info = item->info;
+    found = 1;
+  }
+  return found;
+}
+
+update(struct bucket**h, int size, int key, int info)
+{ int p = hash(key,size);
+  int new = 1;
+  struct bucket*item;
+  for (item = h[p];
+       item!=NULL && item->key!=key;
+       item=item->next)
+    ;
+  if (item!=NULL)
+  { item->info = info;
+    new = 0;
+  }
+  else
+  { item = (struct bucket*) malloc (sizeof (struct bucket));
+    item->info = info;
+    item->key = key;
+    item->next = h[p];
+    h[p] = item;
+  }
+  return new;
+}
+
+
+remKey(struct bucket**h, int size, int key)
+{ int p = hash(key,size);
+  int removed=0;
+  struct bucket**item, *tmp;
+
+  for (item = h+p;
+       *item!=NULL && (*item)->key!=key;
+       item=&((*item)->next))
+    ;
+  if (*item!=NULL)
+  { tmp = *item;
+    *item = (*item)->next;
+    free(tmp);
+    removed = 1;
+  }
+  return removed;
+}
+
+/* Open Addressing */
+#define STATUS_FREE 0
+#define STATUS_USED 1
+struct bucket_O
+{ int status;
+  int key; int info;
+};
+
+void
+initOpen(struct bucket_O*h, int size)
+{ int i;
+  for (i=0; i <size; h[i++].status = STATUS_FREE);
+}
+
+
+
 main()
 { return 0;
 }
