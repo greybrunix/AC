@@ -236,7 +236,7 @@ search(int*v, int a,
  * Pre:: ALL (0<=i<N) A[i] = a(i)
  * Pos:: s = SUM (i=0;N-1) a(i)
  *
- * 1. 
+ * 1.
 s = 0; p = 0;
 while (p<N)
 { s = s + A[p];

@@ -3,11 +3,12 @@
  */
 
 /* Unsorted array search */
-search(x,N,int*v)
-{ auto int i, res;
+int
+search(int x,int N,int*v)
+{ int i, res;
   i = 0;
   while ((i<N) && (v[i] != x))
-  { i++:;
+  { i++;
   }
   if (i==N)
   { res = -1;
@@ -24,6 +25,7 @@ search(x,N,int*v)
  *           = 3 => T(search) IN O(1) best case
  * T(search) = N average case
 */
-main(argc, char**argv)
+int
+main(int argc, char**argv)
 { return 0;
 }
