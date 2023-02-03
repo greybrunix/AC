@@ -1,4 +1,6 @@
-
+/**
+ * File: Specification, verification and Hoare Logic
+ */
 
 /* Haskell notation
 fact 0 = 1
